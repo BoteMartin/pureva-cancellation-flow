@@ -1,0 +1,687 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>Pureva × BOTE · Script d'annulation Recharge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300..700&family=Outfit:wght@600;700&display=swap">
+<style>
+@font-face{font-family:Brand;src:url(scto-grotesk-b-bold.otf) format("opentype");font-weight:700;font-display:swap}
+
+/* DA BOTE (proposition Aesthé) : blanc, encre #1A1A1A, jaune #FAC710 réservé aux infos clés. */
+:root{
+  color-scheme:light;
+  --paper:#FFFFFF; --ink:#1A1A1A; --muted:#414141; --soft:#F0F0F0; --rule:#D4D4D4; --rule-strong:#8A8A8A;
+  --accent:#FAC710; --accent-pale:#FFF1B8;
+  --font:Inter,Arial,sans-serif; --brand:Brand,Inter,sans-serif;
+  --gutter:clamp(16px,4.5vw,57px);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4,p{margin:0}
+::selection{background:var(--accent);color:var(--ink)}
+a:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+.wrap{max-width:1180px;margin:0 auto;padding-inline:var(--gutter)}
+.tab{font-variant-numeric:tabular-nums}
+.pill{display:inline-block;background:var(--accent);color:var(--ink);padding:4px 9px;font-size:12px;font-weight:650;letter-spacing:.04em;text-transform:uppercase}
+.label{font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+
+/* Couverture */
+.cover{background:var(--ink);color:var(--paper);padding:30px 0 44px;overflow:hidden}
+.cover-top{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:15px;color:#E3E3E3}
+.cover-word{font-family:var(--brand);font-weight:700;font-size:clamp(130px,31vw,380px);line-height:.95;letter-spacing:-.04em;margin:28px 0 30px -.04em}
+.cover-bottom{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,340px);gap:24px 50px;border-top:2px solid var(--accent);padding-top:26px}
+.cover-bottom h1{font-size:clamp(30px,4vw,44px);font-weight:440;line-height:1.1;letter-spacing:-.035em}
+.cover-bottom p{font-size:clamp(17px,1.8vw,21px);line-height:1.4;color:var(--accent)}
+.lede{max-width:700px;font-size:clamp(18px,2vw,22px);line-height:1.45;color:#E3E3E3;margin-top:34px}
+.facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:#505050;border:1px solid #505050;margin-top:36px}
+.facts div{background:var(--ink);padding:16px 18px}
+.facts span{display:block;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:#A8A8A8;margin-bottom:6px}
+.facts b{font-size:17px;font-weight:500;color:var(--paper)}
+.facts b.big{color:var(--accent);font-size:26px;font-weight:550;letter-spacing:-.02em}
+
+/* Navigation */
+.nav{position:sticky;top:0;z-index:5;background:var(--paper);border-bottom:1px solid var(--rule)}
+.nav .in{display:flex;gap:6px;overflow-x:auto;padding-block:10px;scrollbar-width:none}
+.nav .in::-webkit-scrollbar{display:none}
+.nav a{flex:none;color:var(--ink);text-decoration:none;font-size:13px;font-weight:500;padding:7px 12px;border:1px solid var(--rule);white-space:nowrap}
+.nav a:hover,.nav a:focus-visible{background:var(--ink);color:var(--paper);border-color:var(--ink);outline:none}
+.nav a.on{background:var(--accent);border-color:var(--accent)}
+
+section{padding-top:88px;scroll-margin-top:58px}
+.sec-head{display:flex;justify-content:space-between;align-items:end;gap:16px;flex-wrap:wrap;margin-bottom:30px}
+.sec-head h2{font-size:clamp(30px,4.6vw,56px);font-weight:420;line-height:1.08;letter-spacing:-.045em;max-width:900px;text-wrap:balance}
+.sec-head .label{color:var(--muted)}
+
+/* Graphique */
+.chart{border-top:2px solid var(--ink);padding-top:8px}
+.legend{display:flex;gap:22px;flex-wrap:wrap;font-size:13px;color:var(--muted);padding:12px 0 14px}
+.legend i{display:inline-block;width:12px;height:12px;margin-right:7px;vertical-align:-1px}
+.row{display:grid;grid-template-columns:minmax(0,270px) minmax(0,1fr) 96px;gap:6px 20px;align-items:center;padding-block:11px;border-top:1px solid var(--rule)}
+.row .name{font-size:15px;min-width:0}
+.row .name a{color:inherit;text-decoration:none;border-bottom:1px solid transparent}
+.row .name a:hover{border-bottom-color:var(--ink)}
+.bar{height:24px;background:var(--soft);position:relative}
+.bar span{position:absolute;inset:0 auto 0 0;background:var(--ink)}
+.bar em{position:absolute;left:calc(var(--w) + 8px);top:50%;transform:translateY(-50%);font-style:normal;font-size:13px;font-weight:600}
+.bar.full em{left:auto;right:9px;color:var(--paper)}
+.save{justify-self:end;font-size:14px;font-weight:650;padding:3px 9px;background:var(--accent);white-space:nowrap}
+.save.none{background:transparent;color:var(--muted);font-weight:400;font-size:13px}
+.chart-note{margin-top:4px;padding-top:14px;border-top:1px solid var(--rule);font-size:13px;color:var(--muted)}
+
+.keys{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;margin-top:40px}
+.key{background:var(--soft);padding:22px 24px 24px}
+.key .n{font-size:clamp(52px,6vw,76px);font-weight:520;letter-spacing:-.05em;line-height:1}
+.key p{font-size:15px;line-height:1.45;margin-top:14px;color:var(--muted)}
+.key.hero{background:var(--ink);color:var(--paper)}
+.key.hero .n{color:var(--accent)}
+.key.hero p{color:#E3E3E3}
+
+.callout{background:var(--accent);padding:20px 24px;margin-top:20px}
+.callout .label{margin-bottom:8px}
+.callout p:last-child{font-size:17px;line-height:1.45;font-weight:450;max-width:860px}
+
+/* Motifs */
+.reason{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:56px;align-items:start;border-top:2px solid var(--ink);padding-top:26px}
+.eyebrow{display:flex;gap:12px;align-items:center;flex-wrap:wrap;font-size:14px;color:var(--muted)}
+.reason h2{font-size:clamp(30px,4vw,48px);font-weight:420;line-height:1.08;letter-spacing:-.04em;margin-top:16px;text-wrap:balance}
+.stats{display:flex;flex-wrap:wrap;gap:8px 30px;margin-top:20px;font-size:14px;color:var(--muted)}
+.stats b{font-size:26px;font-weight:520;letter-spacing:-.03em;color:var(--ink);margin-right:6px}
+.block{margin-top:30px;max-width:660px}
+.block>h3{font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding-bottom:10px;border-bottom:1px solid var(--rule-strong);margin-bottom:12px}
+.offer{display:grid;grid-template-columns:180px minmax(0,1fr) 58px;gap:14px;align-items:center;font-size:14px;padding-block:5px}
+.ob{height:12px;background:var(--soft);position:relative}
+.ob span{position:absolute;inset:0 auto 0 0;background:var(--ink)}
+.offer .v{text-align:right;font-weight:650}
+.offer.best .v{background:var(--accent);padding:1px 6px;justify-self:end}
+.verb{display:grid;gap:8px}
+.verb q{display:block;font-size:15px;line-height:1.45;padding:10px 14px;background:var(--soft);border-left:3px solid var(--ink);quotes:"«\00a0" "\00a0»"}
+.script ol{margin:0;padding:0;list-style:none;counter-reset:s;display:grid}
+.script li{counter-increment:s;display:grid;grid-template-columns:40px minmax(0,1fr);font-size:18px;line-height:1.45;padding-block:9px;border-bottom:1px solid var(--rule)}
+.script li:last-child{border-bottom:0}
+.script li::before{content:counter(s,decimal-leading-zero);font-size:13px;font-weight:650;padding-top:4px;font-variant-numeric:tabular-nums}
+.ph{background:var(--accent-pale);box-shadow:inset 0 -2px 0 var(--accent);padding:0 4px}
+.reco{margin-top:30px;display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px 18px;font-size:15px;line-height:1.45;max-width:660px;padding:18px 22px 20px;background:var(--ink);color:#E3E3E3}
+.reco dt{font-size:12px;font-weight:650;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);padding-top:2px}
+.reco dd{margin:0}
+.reco dt.after+dd{color:var(--paper);font-weight:500}
+.reco s{color:#A8A8A8}
+
+/* Maquettes : DA pureva.com, on n'y touche pas */
+.phone{
+  --p-bg:#FDFCFA; --p-ink:#021211; --p-muted:#525252; --p-teal:#0A5C54; --p-mint:#CCF2EB; --p-sand:#F3EFE6; --p-line:rgba(20,49,48,.12);
+  --p-head:"Outfit","Inter",system-ui,sans-serif;
+  width:100%;max-width:320px;justify-self:center;position:sticky;top:76px}
+.phone-cap{font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;text-align:center}
+.device{background:var(--ink);border-radius:30px;padding:10px;box-shadow:0 18px 40px -24px rgba(26,26,26,.6)}
+.screen{border-radius:22px;overflow:hidden;background:var(--p-bg);color:var(--p-ink)}
+.lp-top{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;font-size:12px;border-bottom:1px solid var(--p-line);color:var(--p-muted)}
+.lp-top b{font-family:var(--p-head);font-size:20px;font-weight:700;letter-spacing:-0.02em;color:var(--p-teal)}
+.lp{padding:16px;display:grid;gap:14px}
+.chip{justify-self:start;font-size:11px;font-weight:500;padding:4px 10px;border-radius:9999px;background:var(--p-mint);color:var(--p-teal)}
+.video{aspect-ratio:3/4;max-width:100%;border-radius:12px;overflow:hidden;background:#CFD3D4 url("adrien.webp") center 40%/cover no-repeat;position:relative;display:flex;flex-direction:column;justify-content:flex-end;gap:6px;padding:14px;color:#FFFFFF}
+.video::before{content:"";position:absolute;inset:45% 0 0 0;background:linear-gradient(to bottom,rgba(2,18,17,0),rgba(2,18,17,.78))}
+.video>*{position:relative}
+.video .cap{font-size:12px;line-height:1.35}
+.video .cap b{display:block;font-size:14px;font-weight:600}
+.video .sub{font-family:var(--p-head);font-size:15px;line-height:1.25;font-weight:600}
+.lp h4{margin:0;font-family:var(--p-head);font-size:21px;font-weight:700;line-height:1.15;letter-spacing:-0.02em;color:var(--p-ink)}
+.lp ul{margin:0;padding:10px 12px 10px 28px;font-size:13px;display:grid;gap:4px;background:var(--p-sand);border-radius:8px}
+.opts{display:grid;gap:6px}
+.opt{display:flex;justify-content:space-between;gap:8px;font-size:13px;padding:10px 12px;border:1px solid var(--p-line);border-radius:8px;background:#FFFFFF}
+.opt.on{border:2px solid var(--p-teal);padding:9px 11px;background:var(--p-mint)}
+.opt small{color:var(--p-teal);font-weight:600}
+.cta{background:var(--p-teal);color:var(--p-bg);text-align:center;padding:13px;border-radius:6px;font-size:14px;font-weight:600;letter-spacing:-0.02em}
+.skip{text-align:center;font-size:12px;color:var(--p-muted);text-decoration:underline}
+.lp .fake-input{min-height:64px;border:1px solid var(--p-line);border-radius:8px;background:#FFFFFF;font-size:12px;padding:8px;color:var(--p-muted)}
+
+/* Pied de page */
+.foot{background:var(--ink);color:#E3E3E3;margin-top:110px;padding:40px 0 34px}
+.foot-word{font-family:var(--brand);font-weight:700;font-size:clamp(64px,12vw,140px);line-height:.9;letter-spacing:-.04em;color:var(--paper)}
+.foot-row{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;border-top:2px solid var(--accent);margin-top:22px;padding-top:16px;font-size:14px}
+.foot-row span:first-child{color:var(--accent)}
+
+@media (max-width:900px){
+  .reason{grid-template-columns:minmax(0,1fr);gap:36px}
+  .phone{position:static}
+  .cover-bottom{grid-template-columns:minmax(0,1fr)}
+}
+@media (max-width:640px){
+  section{padding-top:64px}
+  .facts,.keys{grid-template-columns:minmax(0,1fr)}
+  .row{grid-template-columns:minmax(0,1fr) auto}
+  .row .bar{grid-column:1/-1;grid-row:2}
+  .offer{grid-template-columns:120px minmax(0,1fr) 54px;gap:10px;font-size:13px}
+  .script li{font-size:16px;grid-template-columns:34px minmax(0,1fr)}
+  .reco{grid-template-columns:minmax(0,1fr);gap:4px}
+  .reco dd+dt{margin-top:8px}
+}
+@media (prefers-reduced-motion:no-preference){
+  .bar span,.ob span{animation:grow .8s cubic-bezier(.2,.7,.2,1) both;transform-origin:left}
+  @keyframes grow{from{transform:scaleX(.02)}to{transform:scaleX(1)}}
+}
+@media print{
+  .nav{display:none}
+  .cover,.foot,.key.hero,.reco,.callout,.save,.pill{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .phone{position:static}
+  .reason{break-inside:avoid-page}
+}
+</style>
+</head>
+<body>
+
+<header class="cover">
+  <div class="wrap">
+    <div class="cover-top"><span>Agence de rétention</span><span>PUREVA × BOTE · Novembre 2026</span></div>
+    <div class="cover-word" aria-hidden="true">BOTE</div>
+    <div class="cover-bottom">
+      <h1>Script d'annulation Recharge · FGC</h1>
+      <p>Vidéos d'Adrien, cofondateur<br>Une vidéo par raison d'annulation</p>
+    </div>
+    <p class="lede">Pour chaque raison, on a mis le volume, le taux de save de l'offre actuelle, ce que disent les abonnés, le script et un exemple de page.</p>
+    <div class="facts">
+      <div><span>Source</span><b>Flow de cancellation prevention Recharge</b></div>
+      <div><span>Période</span><b>Du 1<sup>er</sup> mai au 17 nov. 2026</b></div>
+      <div><span>Base</span><b class="big tab">3 911</b> <b>annulations avec motif</b></div>
+    </div>
+  </div>
+</header>
+
+<nav class="nav" aria-label="Motifs">
+  <div class="wrap in">
+    <a href="#data">Les chiffres</a>
+    <a href="#accueil">Accueil</a>
+    <a href="#cartouches">Cartouches en stock</a>
+    <a href="#plus-utilise">N'utilise plus</a>
+    <a href="#trop-cher">Trop cher</a>
+    <a href="#installation">Installation</a>
+    <a href="#autre">Autre raison</a>
+    <a href="#pas-apprecie">Pas apprécié</a>
+    <a href="#sans-abo">Sans abonnement</a>
+    <a href="#demenagement">Déménagement</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+  <section id="data">
+    <div class="sec-head">
+      <h2>Un abonné sur trois part parce qu'il a trop de cartouches.</h2>
+      <span class="label">Les chiffres</span>
+    </div>
+    <div class="chart">
+      <div class="legend">
+        <span><i style="background:var(--ink)"></i>Part des annulations</span>
+        <span><i style="background:var(--accent)"></i>Meilleur taux de save actuel</span>
+      </div>
+      <div class="row"><span class="name"><a href="#cartouches">J'ai encore des cartouches</a></span><div class="bar full" style="--w:100%"><span style="width:100%"></span><em class="tab">33,6 %</em></div><span class="save tab">6,7 %</span></div>
+      <div class="row"><span class="name"><a href="#plus-utilise">Je n'utilise plus le produit</a></span><div class="bar" style="--w:56.5%"><span style="width:56.5%"></span><em class="tab">19,0 %</em></div><span class="save tab">6,0 %</span></div>
+      <div class="row"><span class="name"><a href="#trop-cher">C'est trop cher</a></span><div class="bar" style="--w:48.9%"><span style="width:48.9%"></span><em class="tab">16,4 %</em></div><span class="save tab">23,0 %</span></div>
+      <div class="row"><span class="name"><a href="#installation">Installation ratée</a></span><div class="bar" style="--w:32.8%"><span style="width:32.8%"></span><em class="tab">11,0 %</em></div><span class="save tab">6,9 %</span></div>
+      <div class="row"><span class="name"><a href="#autre">Autre raison</a></span><div class="bar" style="--w:22.9%"><span style="width:22.9%"></span><em class="tab">7,7 %</em></div><span class="save none">pas d'offre</span></div>
+      <div class="row"><span class="name"><a href="#pas-apprecie">Produit pas apprécié</a></span><div class="bar" style="--w:18%"><span style="width:18%"></span><em class="tab">6,1 %</em></div><span class="save tab">2,9 %</span></div>
+      <div class="row"><span class="name"><a href="#sans-abo">Je préfère sans abonnement</a></span><div class="bar" style="--w:14%"><span style="width:14%"></span><em class="tab">4,7 %</em></div><span class="save tab">2,1 %</span></div>
+      <div class="row"><span class="name"><a href="#demenagement">Vacances ou déménagement</a></span><div class="bar" style="--w:4.6%"><span style="width:4.6%"></span><em class="tab">1,5 %</em></div><span class="save tab">3,2 %</span></div>
+      <p class="chart-note">Le taux de save est celui de l'offre qui garde le plus d'abonnés pour chaque motif aujourd'hui.</p>
+    </div>
+
+    <div class="keys">
+      <div class="key"><div class="n tab">13,4 %</div><p>des 4 945 parcours d'annulation se terminent sans résiliation.</p></div>
+      <div class="key hero"><div class="n tab">23 %</div><p>de save avec la remise sur « trop cher ». Aucune autre offre ne dépasse 7 %.</p></div>
+      <div class="key"><div class="n tab">2,9 %</div><p>avec la même remise sur « pas apprécié ». Ces abonnés se plaignent du goût, du débit ou des fuites, et une remise n'y change rien.</p></div>
+    </div>
+
+    <div class="callout">
+      <p class="label">Ce qui revient dans tous les motifs</p>
+      <p>Beaucoup d'abonnés disent avoir été prélevés sans prévenir, ou pensaient avoir déjà annulé. Si le flow J-3 Recharge part bien à tout le monde, Adrien peut le dire dès l'accueil de la vidéo.</p>
+    </div>
+  </section>
+
+  <section id="accueil">
+    <div class="reason">
+      <div>
+        <div class="eyebrow"><span class="pill">Accueil</span><span>avant le choix du motif</span></div>
+        <h2>Adrien raconte pourquoi Pureva existe et propose de décaler</h2>
+        <div class="stats tab"><span><b>4 945</b>entrées dans le flow</span><span><b>193</b>abonnés gardés par le report proposé avant le motif</span></div>
+        <div class="block script">
+          <h3>Script</h3>
+          <ol>
+            <li><span>« Bonjour, moi c'est Adrien. J'ai créé Pureva avec Vincent, mon ami d'enfance. »</span></li>
+            <li><span>« On a grandi en Martinique, et on a été contaminés par le chlordécone, un pesticide cancérigène qu'on buvait avec l'eau du robinet. »</span></li>
+            <li><span>« On a passé trois ans avec des experts pour mettre au point ce filtre. Pour nous, personne ne devrait avoir à se demander si son eau est saine. »</span></li>
+            <li><span>« Votre abonnement est sans engagement et la livraison est offerte. Vous pouvez décaler ou espacer vos envois en un clic. »</span></li>
+            <li><span>« Si vous avez trop de cartouches ou que le moment est mal choisi, décalez votre envoi juste en dessous. Si vous partez quand même, dites-nous pourquoi. On lit toutes les réponses. »</span></li>
+          </ol>
+        </div>
+        <dl class="reco">
+          <dt class="after">Recharge</dt><dd>Deflection Page avec l'offre « Delay and change frequency » et un bouton pour continuer.</dd>
+        </dl>
+      </div>
+      <div class="phone" aria-label="Exemple de page d'accueil du flow">
+        <p class="phone-cap">Exemple de page</p>
+        <div class="device"><div class="screen">
+          <div class="lp-top"><b>Pureva.</b><span>Mon abonnement</span></div>
+          <div class="lp">
+            <div class="video"><span class="sub">« Personne ne devrait avoir à se demander si son eau est saine. »</span><span class="cap"><b>Adrien, cofondateur</b>Pourquoi on a créé Pureva · 0:50</span></div>
+            <h4>Avant de partir, un mot d'Adrien</h4>
+            <ul><li>Sans engagement, livraison offerte</li><li>Vous décalez ou espacez en un clic</li></ul>
+            <div class="cta">Décaler ma prochaine livraison</div>
+            <div class="skip">Continuer l'annulation</div>
+          </div>
+        </div></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="cartouches">
+    <div class="reason">
+      <div>
+        <div class="eyebrow"><span class="pill">Motif 1</span><span>le plus fréquent</span></div>
+        <h2>« J'ai encore des cartouches »</h2>
+        <div class="stats tab"><span><b>1 314</b>annulations</span><span><b>33,6 %</b>du total</span><span><b>396</b>avec commentaire</span></div>
+        <div class="block">
+          <h3>Taux de save par offre testée</h3>
+          <div class="offer best"><span>Report (delay)</span><div class="ob"><span style="width:26.8%"></span></div><span class="v tab">6,7 %</span></div>
+        </div>
+        <div class="block verb">
+          <h3>Ce qu'ils disent</h3>
+          <q>J'ai beaucoup de cartouches non utilisées, trop même pour une pause de trois mois.</q>
+          <q>Je n'ai pas été prévenu de ce renouvellement, que j'aurais décalé.</q>
+          <q>On ne peut pas suspendre plus que 2 mois.</q>
+        </div>
+        <div class="block script">
+          <h3>Script</h3>
+          <ol>
+            <li><span>« Vous avez des cartouches d'avance ? Ça arrive souvent, chaque foyer boit à son rythme. »</span></li>
+            <li><span>« En moyenne, une cartouche tient deux mois. Ça dépend de la quantité d'eau que vous filtrez et de l'eau de votre région. »</span></li>
+            <li><span>« Plutôt que de résilier, décalez votre prochain envoi de un à <span class="ph">six</span> mois, ou recevez vos cartouches moins souvent. »</span></li>
+            <li><span>« Vous gardez votre réduction et la livraison offerte. »</span></li>
+            <li><span>« Pensez juste à changer la cartouche à temps : une cartouche usée filtre moins bien. »</span></li>
+          </ol>
+        </div>
+        <dl class="reco">
+          <dt>Avant</dt><dd>Report limité à 2 mois</dd>
+          <dt class="after">Après</dt><dd>« Delay and change frequency » avec un report possible jusqu'à <span class="ph">6</span> mois et le choix de la fréquence</dd>
+        </dl>
+      </div>
+      <div class="phone" aria-label="Exemple de page pour le motif cartouches en stock">
+        <p class="phone-cap">Exemple de page</p>
+        <div class="device"><div class="screen">
+          <div class="lp-top"><b>Pureva.</b><span>Annulation</span></div>
+          <div class="lp">
+            <span class="chip">Votre raison : j'ai encore des cartouches</span>
+            <div class="video"><span class="cap"><b>Adrien</b>Combien de temps dure une cartouche · 0:40</span></div>
+            <h4>Gardez votre stock et décalez le prochain envoi</h4>
+            <div class="opts">
+              <div class="opt"><span>Décaler de 2 mois</span></div>
+              <div class="opt on"><span>Décaler de 4 mois</span><small>conseillé</small></div>
+              <div class="opt"><span>Recevoir moins souvent</span></div>
+            </div>
+            <div class="cta">Décaler ma livraison</div>
+            <div class="skip">Continuer l'annulation</div>
+          </div>
+        </div></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="plus-utilise">
+    <div class="reason">
+      <div>
+        <div class="eyebrow"><span class="pill">Motif 2</span></div>
+        <h2>« Je n'utilise plus le produit »</h2>
+        <div class="stats tab"><span><b>743</b>annulations</span><span><b>19,0 %</b>du total</span><span><b>275</b>avec commentaire</span></div>
+        <div class="block">
+          <h3>Taux de save par offre testée</h3>
+          <div class="offer best"><span>Remise (discount)</span><div class="ob"><span style="width:24%"></span></div><span class="v tab">6,0 %</span></div>
+          <div class="offer"><span>Report (delay)</span><div class="ob"><span style="width:9.6%"></span></div><span class="v tab">2,4 %</span></div>
+        </div>
+        <div class="block verb">
+          <h3>Ce qu'ils disent</h3>
+          <q>Je vais déménager. Je reprendrai un kit complet dès que je serai dans mon nouveau logement.</q>
+          <q>Le support est trop lourd pour mon robinet, toute la visserie est usée et fuit.</q>
+          <q>Nous avons investi dans un osmoseur.</q>
+        </div>
+        <div class="block script">
+          <h3>Script</h3>
+          <ol>
+            <li><span>« Merci de nous dire ce qui s'est passé. »</span></li>
+            <li><span>« Si vous déménagez, mettez votre abonnement en pause. Le filtre se remonte sans outil dans votre nouveau logement. »</span></li>
+            <li><span>« Si ça fuit ou qu'une pièce a lâché, écrivez-nous. Le filtre est garanti deux ans et on vous envoie la pièce. »</span></li>
+            <li><span>« Et si vous êtes passé à un autre système, j'aimerais savoir lequel. »</span></li>
+          </ol>
+        </div>
+        <dl class="reco">
+          <dt>Avant</dt><dd><s>Remise</s>. Les commentaires parlent de déménagement, de fuites et d'autres systèmes, jamais de prix.</dd>
+          <dt class="after">Après</dt><dd>« Delay » pour la pause, avec « Contact customer support » en repli pour les fuites</dd>
+        </dl>
+      </div>
+      <div class="phone" aria-label="Exemple de page pour le motif n'utilise plus">
+        <p class="phone-cap">Exemple de page</p>
+        <div class="device"><div class="screen">
+          <div class="lp-top"><b>Pureva.</b><span>Annulation</span></div>
+          <div class="lp">
+            <span class="chip">Votre raison : je n'utilise plus le produit</span>
+            <div class="video"><span class="cap"><b>Adrien</b>Un déménagement, une fuite ? · 0:35</span></div>
+            <h4>Qu'est-ce qui a changé ?</h4>
+            <div class="opts">
+              <div class="opt on"><span>Je déménage, je mets en pause</span></div>
+              <div class="opt"><span>Ça fuit, je veux la pièce</span><small>garantie 2 ans</small></div>
+            </div>
+            <div class="cta">Mettre en pause</div>
+            <div class="skip">Continuer l'annulation</div>
+          </div>
+        </div></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="trop-cher">
+    <div class="reason">
+      <div>
+        <div class="eyebrow"><span class="pill">Motif 3</span><span>la remise marche ici</span></div>
+        <h2>« C'est trop cher »</h2>
+        <div class="stats tab"><span><b>642</b>annulations</span><span><b>16,4 %</b>du total</span><span><b>218</b>avec commentaire</span></div>
+        <div class="block">
+          <h3>Taux de save par offre testée</h3>
+          <div class="offer best"><span>Remise (discount)</span><div class="ob"><span style="width:92%"></span></div><span class="v tab">23,0 %</span></div>
+          <div class="offer"><span>Sauter un envoi (skip)</span><div class="ob"><span style="width:45.6%"></span></div><span class="v tab">11,4 %</span></div>
+          <div class="offer"><span>Changer de produit (swap)</span><div class="ob"><span style="width:18.8%"></span></div><span class="v tab">4,7 %</span></div>
+        </div>
+        <div class="block verb">
+          <h3>Ce qu'ils disent</h3>
+          <q>Trop cher avec la conjoncture actuelle.</q>
+          <q>Retraite oblige, les revenus ne sont plus les mêmes.</q>
+          <q>Je reçois trop de produit par rapport à mon utilisation.</q>
+        </div>
+        <div class="block script">
+          <h3>Script</h3>
+          <ol>
+            <li><span>« Je comprends. En ce moment, on regarde tous ses dépenses de près. »</span></li>
+            <li><span>« Avec Pureva, le litre d'eau filtrée revient à <span class="ph">0,02 €</span>. En bouteille, ça peut monter à 0,30 €. »</span></li>
+            <li><span>« Je vous propose <span class="ph">-X %</span> sur vos <span class="ph">deux</span> prochaines commandes. »</span></li>
+            <li><span>« Vous pouvez aussi espacer vos envois pour payer moins chaque mois. Et à l'année, c'est 20 % moins cher. »</span></li>
+          </ol>
+        </div>
+        <dl class="reco">
+          <dt>Avant</dt><dd>Remise, skip et <s>swap</s> (4,7 %)</dd>
+          <dt class="after">Après</dt><dd>« Discount » en premier, sur plusieurs commandes, puis « Delay and change frequency ». On retire le swap.</dd>
+        </dl>
+      </div>
+      <div class="phone" aria-label="Exemple de page pour le motif trop cher">
+        <p class="phone-cap">Exemple de page</p>
+        <div class="device"><div class="screen">
+          <div class="lp-top"><b>Pureva.</b><span>Annulation</span></div>
+          <div class="lp">
+            <span class="chip">Votre raison : c'est trop cher</span>
+            <div class="video"><span class="sub">0,02 € le litre filtré.<br>Jusqu'à 0,30 € en bouteille.</span><span class="cap"><b>Adrien</b>Un geste pour vous · 0:30</span></div>
+            <h4>-X % sur vos 2 prochaines livraisons</h4>
+            <ul><li>Toujours sans engagement</li><li>Livraison offerte</li></ul>
+            <div class="cta">Profiter de la remise</div>
+            <div class="skip">Recevoir moins souvent</div>
+            <div class="skip">Continuer l'annulation</div>
+          </div>
+        </div></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="installation">
+    <div class="reason">
+      <div>
+        <div class="eyebrow"><span class="pill">Motif 4</span><span>un abonné sur deux laisse un commentaire</span></div>
+        <h2>« Je n'ai pas réussi à installer le filtre »</h2>
+        <div class="stats tab"><span><b>431</b>annulations</span><span><b>11,0 %</b>du total</span><span><b>216</b>avec commentaire</span></div>
+        <div class="block">
+          <h3>Taux de save par offre testée</h3>
+          <div class="offer best"><span>Contact support</span><div class="ob"><span style="width:27.6%"></span></div><span class="v tab">6,9 %</span></div>
+          <div class="offer"><span>Report (delay)</span><div class="ob"><span style="width:13.6%"></span></div><span class="v tab">3,4 %</span></div>
+        </div>
+        <div class="block verb">
+          <h3>Ce qu'ils disent</h3>
+          <q>Adaptateur F16-M22 toujours en rupture de stock.</q>
+          <q>Vous m'avez demandé une vidéo puis je n'ai jamais eu de réponse.</q>
+          <q>Je peux continuer avec vous si vous m'envoyez la bonne pièce.</q>
+        </div>
+        <div class="block script">
+          <h3>Script</h3>
+          <ol>
+            <li><span>« Je suis désolé. Recevoir le filtre et ne pas pouvoir l'installer, c'est vraiment pénible. »</span></li>
+            <li><span>« Avec les six adaptateurs de la boîte, Pureva s'installe sur 99 % des robinets. Si le vôtre n'en fait pas partie, on vous envoie le bon adaptateur gratuitement. »</span></li>
+            <li><span>« Envoyez-nous une photo de votre robinet, on vous répond sous <span class="ph">24 h</span>. »</span></li>
+            <li><span>« Pendant ce temps, on met vos envois en pause pour que vous ne payiez pas des cartouches que vous ne pouvez pas utiliser. »</span></li>
+          </ol>
+        </div>
+        <dl class="reco">
+          <dt>Avant</dt><dd>Report, puis support</dd>
+          <dt class="after">Après</dt><dd>« Contact customer support » en premier avec un formulaire photo du robinet, et une pause automatique. Le manque de réponse du SAV est la plainte la plus fréquente ici, donc on n'annonce un délai que s'il est tenu.</dd>
+        </dl>
+      </div>
+      <div class="phone" aria-label="Exemple de page pour le motif installation">
+        <p class="phone-cap">Exemple de page</p>
+        <div class="device"><div class="screen">
+          <div class="lp-top"><b>Pureva.</b><span>Annulation</span></div>
+          <div class="lp">
+            <span class="chip">Votre raison : installation impossible</span>
+            <div class="video"><span class="cap"><b>Adrien</b>On trouve votre adaptateur · 0:35</span></div>
+            <h4>On vous envoie le bon adaptateur, gratuitement</h4>
+            <ul><li>Une photo de votre robinet suffit</li><li>Vos envois sont en pause en attendant</li></ul>
+            <div class="cta">Envoyer une photo</div>
+            <div class="skip">Continuer l'annulation</div>
+          </div>
+        </div></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="autre">
+    <div class="reason">
+      <div>
+        <div class="eyebrow"><span class="pill">Motif 5</span></div>
+        <h2>« Autre raison »</h2>
+        <div class="stats tab"><span><b>300</b>annulations</span><span><b>7,7 %</b>du total</span><span><b>90</b>avec commentaire</span></div>
+        <div class="block verb">
+          <h3>Ce qu'ils disent</h3>
+          <q>Doublon d'abonnement.</q>
+          <q>Je n'ai jamais validé cette commande.</q>
+          <q>Je n'ai toujours pas reçu mon filtre depuis le 11 octobre.</q>
+        </div>
+        <div class="block script">
+          <h3>Script</h3>
+          <ol>
+            <li><span>« Vous avez une autre raison ? C'est justement celle qu'on a le plus besoin de comprendre. »</span></li>
+            <li><span>« Écrivez-la juste en dessous. Vincent et moi, on lit tout. »</span></li>
+            <li><span>« Si vous avez seulement besoin d'une pause, décalez votre envoi et gardez vos avantages. »</span></li>
+          </ol>
+        </div>
+        <dl class="reco">
+          <dt class="after">Recharge</dt><dd>Champ libre obligatoire, avec « Delay » en repli.</dd>
+          <dt class="after">Ops</dt><dd>Remonter les doublons d'abonnement, les commandes « jamais validées » et les filtres non reçus.</dd>
+        </dl>
+      </div>
+      <div class="phone" aria-label="Exemple de page pour le motif autre raison">
+        <p class="phone-cap">Exemple de page</p>
+        <div class="device"><div class="screen">
+          <div class="lp-top"><b>Pureva.</b><span>Annulation</span></div>
+          <div class="lp">
+            <span class="chip">Votre raison : autre</span>
+            <div class="video"><span class="cap"><b>Adrien</b>Dites-nous tout · 0:20</span></div>
+            <h4>Qu'est-ce qui ne va pas ?</h4>
+            <div class="fake-input">On lit chaque réponse.</div>
+            <div class="cta">Envoyer</div>
+            <div class="skip">Plutôt décaler ma livraison</div>
+          </div>
+        </div></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="pas-apprecie">
+    <div class="reason">
+      <div>
+        <div class="eyebrow"><span class="pill">Motif 6</span></div>
+        <h2>« Je n'ai pas apprécié le produit »</h2>
+        <div class="stats tab"><span><b>237</b>annulations</span><span><b>6,1 %</b>du total</span><span><b>129</b>avec commentaire</span></div>
+        <div class="block">
+          <h3>Taux de save par offre testée</h3>
+          <div class="offer best"><span>Remise (discount)</span><div class="ob"><span style="width:11.6%"></span></div><span class="v tab">2,9 %</span></div>
+          <div class="offer"><span>Sauter un envoi (skip)</span><div class="ob"><span style="width:0%"></span></div><span class="v tab">0 %</span></div>
+        </div>
+        <div class="block verb">
+          <h3>Ce qu'ils disent</h3>
+          <q>Votre filtre ne filtre pas le calcaire.</q>
+          <q>L'eau a un goût et une odeur de métal.</q>
+          <q>Aucun débit, beaucoup trop long pour le remplissage d'une bouteille.</q>
+        </div>
+        <div class="block script">
+          <h3>Script</h3>
+          <ol>
+            <li><span>« Merci de votre franchise. »</span></li>
+            <li><span>« Pureva ne retire pas le calcaire, et on l'a fait exprès. Le filtre retient le chlore, les pesticides et les microplastiques, mais il laisse passer le calcium et le magnésium. »</span></li>
+            <li><span>« Nos résultats sont mesurés par des laboratoires indépendants, et les rapports sont sur notre site. »</span></li>
+            <li><span>« Si le débit baisse ou que l'eau a un goût bizarre, la cartouche est souvent saturée ou l'adaptateur mal serré. Écrivez-nous et on regarde ensemble. »</span></li>
+          </ol>
+        </div>
+        <dl class="reco">
+          <dt>Avant</dt><dd><s>Remise</s>. Ces abonnés ont un souci avec le produit et le prix ne les retient pas.</dd>
+          <dt class="after">Après</dt><dd>« Contact customer support » et un lien vers les analyses labo</dd>
+        </dl>
+      </div>
+      <div class="phone" aria-label="Exemple de page pour le motif produit pas apprécié">
+        <p class="phone-cap">Exemple de page</p>
+        <div class="device"><div class="screen">
+          <div class="lp-top"><b>Pureva.</b><span>Annulation</span></div>
+          <div class="lp">
+            <span class="chip">Votre raison : pas apprécié</span>
+            <div class="video"><span class="sub">Pourquoi Pureva laisse passer le calcaire</span><span class="cap"><b>Adrien</b>Ce que retient le filtre · 0:45</span></div>
+            <h4>Un souci de goût ou de débit ? On regarde avec vous</h4>
+            <ul><li>Rapports de labo en ligne</li><li>Filtre garanti 2 ans</li></ul>
+            <div class="cta">Parler à l'équipe</div>
+            <div class="skip">Continuer l'annulation</div>
+          </div>
+        </div></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="sans-abo">
+    <div class="reason">
+      <div>
+        <div class="eyebrow"><span class="pill">Motif 7</span><span>aucune offre aujourd'hui</span></div>
+        <h2>« Je préfère acheter sans abonnement »</h2>
+        <div class="stats tab"><span><b>184</b>annulations</span><span><b>4,7 %</b>du total</span><span><b>30</b>avec commentaire</span></div>
+        <div class="block">
+          <h3>Taux de save actuel</h3>
+          <div class="offer best"><span>Aucune offre</span><div class="ob"><span style="width:8.4%"></span></div><span class="v tab">2,1 %</span></div>
+        </div>
+        <div class="block verb">
+          <h3>Ce qu'ils disent</h3>
+          <q>J'ai eu l'impression d'un forcing que je n'ai pas apprécié.</q>
+          <q>J'aime maîtriser mes commandes.</q>
+        </div>
+        <div class="block script">
+          <h3>Script</h3>
+          <ol>
+            <li><span>« Je comprends, on n'aime pas se sentir coincé. »</span></li>
+            <li><span>« Depuis votre espace client, vous pouvez décaler, espacer, mettre en pause ou arrêter votre abonnement en un clic. »</span></li>
+            <li><span>« C'est vous qui choisissez le rythme. Et vous avez 10 % de remise sur la formule six mois, 20 % sur l'annuelle, avec la livraison offerte. »</span></li>
+          </ol>
+        </div>
+        <dl class="reco">
+          <dt>Avant</dt><dd>Aucune offre</dd>
+          <dt class="after">Après</dt><dd>« Delay and change frequency », pour montrer que l'abonné garde la main</dd>
+        </dl>
+      </div>
+      <div class="phone" aria-label="Exemple de page pour le motif sans abonnement">
+        <p class="phone-cap">Exemple de page</p>
+        <div class="device"><div class="screen">
+          <div class="lp-top"><b>Pureva.</b><span>Annulation</span></div>
+          <div class="lp">
+            <span class="chip">Votre raison : je préfère sans abonnement</span>
+            <div class="video"><span class="cap"><b>Adrien</b>Vous choisissez le rythme · 0:30</span></div>
+            <h4>Vous décidez quand vous recevez vos cartouches</h4>
+            <div class="opts">
+              <div class="opt on"><span>Tous les 4 mois</span></div>
+              <div class="opt"><span>Tous les 6 mois</span></div>
+              <div class="opt"><span>Décaler le prochain envoi</span></div>
+            </div>
+            <div class="cta">Choisir mon rythme</div>
+            <div class="skip">Continuer l'annulation</div>
+          </div>
+        </div></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="demenagement">
+    <div class="reason">
+      <div>
+        <div class="eyebrow"><span class="pill">Motif 8</span></div>
+        <h2>« Je pars en vacances ou je déménage »</h2>
+        <div class="stats tab"><span><b>60</b>annulations</span><span><b>1,5 %</b>du total</span><span><b>26</b>avec commentaire</span></div>
+        <div class="block">
+          <h3>Taux de save par offre testée</h3>
+          <div class="offer best"><span>Report (delay)</span><div class="ob"><span style="width:12.8%"></span></div><span class="v tab">3,2 %</span></div>
+        </div>
+        <div class="block verb">
+          <h3>Ce qu'ils disent</h3>
+          <q>Déménagement à l'étranger.</q>
+          <q>J'ai déménagé au Portugal et mon robinet ne permet pas d'installer le filtre.</q>
+        </div>
+        <div class="block script">
+          <h3>Script</h3>
+          <ol>
+            <li><span>« Bon voyage, ou bon déménagement ! »</span></li>
+            <li><span>« Pas la peine de résilier, mettez votre abonnement en pause le temps qu'il faut. »</span></li>
+            <li><span>« Si vous déménagez, changez simplement votre adresse. Le filtre se remonte sans outil, et si votre nouveau robinet pose problème, on vous envoie l'adaptateur. »</span></li>
+          </ol>
+        </div>
+        <dl class="reco">
+          <dt class="after">Recharge</dt><dd>« Delay », avec un lien pour changer d'adresse</dd>
+        </dl>
+      </div>
+      <div class="phone" aria-label="Exemple de page pour le motif déménagement">
+        <p class="phone-cap">Exemple de page</p>
+        <div class="device"><div class="screen">
+          <div class="lp-top"><b>Pureva.</b><span>Annulation</span></div>
+          <div class="lp">
+            <span class="chip">Votre raison : vacances ou déménagement</span>
+            <div class="video"><span class="cap"><b>Adrien</b>Mettez en pause · 0:20</span></div>
+            <h4>Mettez en pause, vous reprendrez à votre retour</h4>
+            <div class="opts">
+              <div class="opt on"><span>Pause 1 mois</span></div>
+              <div class="opt"><span>Pause 3 mois</span></div>
+              <div class="opt"><span>Changer mon adresse</span></div>
+            </div>
+            <div class="cta">Mettre en pause</div>
+            <div class="skip">Continuer l'annulation</div>
+          </div>
+        </div></div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <div class="foot-word" aria-hidden="true">BOTE</div>
+    <div class="foot-row">
+      <span>BOTE pour Pureva</span>
+      <span>Données Recharge au 17 nov. 2026. Faits produit : pureva.com</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Pastille de navigation active selon la section visible
+const links=[...document.querySelectorAll('.nav a')];
+const io=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){links.forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+e.target.id));const on=links.find(a=>a.classList.contains('on'));if(on)on.scrollIntoView({block:'nearest',inline:'nearest'})}})},{rootMargin:'-45% 0px -50% 0px'});
+document.querySelectorAll('main section').forEach(s=>io.observe(s));
+</script>
+</body>
+</html>
